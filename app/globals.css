@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  /* Pastel cream / brown / pink */
+  --k-cream: #fff7ed; /* warm cream */
+  --k-milk: #fffaf5; /* off-white */
+  --k-pink: #f6c9d6; /* pastel pink */
+  --k-rose: #f3b6c8; /* slightly deeper pink */
+  --k-brown: #7a5a48; /* milk-tea brown */
+  --k-ink: #2b211d; /* warm ink */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-kodchasan);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  font-family: var(--font-kodchasan), ui-sans-serif, system-ui, -apple-system,
+    Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+/* Soft dreamy background */
+.bg-dreamy {
+  background:
+    radial-gradient(900px 520px at 10% 10%, rgba(246, 201, 214, 0.62), transparent 62%),
+    radial-gradient(980px 560px at 92% 16%, rgba(255, 235, 214, 0.70), transparent 62%),
+    radial-gradient(980px 560px at 55% 100%, rgba(203, 169, 151, 0.28), transparent 62%),
+    linear-gradient(180deg, var(--k-milk) 0%, var(--k-cream) 100%);
+}
+
+/* Glass card */
+.card-glass {
+  background: rgba(255, 250, 245, 0.72);
+  border: 1px solid rgba(255, 250, 245, 0.62);
+  box-shadow:
+    0 18px 60px rgba(43, 33, 29, 0.10),
+    0 4px 18px rgba(43, 33, 29, 0.06);
+  backdrop-filter: blur(14px);
+}
+
+/* Gentle shimmer border */
+.ring-soft {
+  box-shadow:
+    0 0 0 1px rgba(203, 169, 151, 0.36),
+    0 0 0 6px rgba(246, 201, 214, 0.18);
+}

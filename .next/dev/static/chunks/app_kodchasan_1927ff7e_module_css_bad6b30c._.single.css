@@ -1,0 +1,115 @@
+/* [project]/app/kodchasan_1927ff7e.module.css [app-client] (css) */
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_ExtraLight-s.p.e19b640a.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_Light-s.p.c9a0ff69.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_Regular-s.p.b30f7e95.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_Medium-s.p.0735f215.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_SemiBold-s.p.dfb3ebfe.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_Bold-s.p.f29a4909.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_Italic-s.p.53eb0610.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_MediumItalic-s.p.58faa717.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_BoldItalic-s.p.23102f84.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_LightItalic-s.p.8bceee92.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_ExtraLightItalic-s.p.f24f4d06.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: kodchasan;
+  src: url("../media/Kodchasan_SemiBoldItalic-s.p.8244e2a8.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: kodchasan Fallback;
+  src: local(Arial);
+  ascent-override: 89.99%;
+  descent-override: 24.26%;
+  line-gap-override: 0.0%;
+  size-adjust: 113.79%;
+}
+
+.kodchasan_1927ff7e-module__FFDdDa__className {
+  font-family: kodchasan, kodchasan Fallback;
+}
+
+.kodchasan_1927ff7e-module__FFDdDa__variable {
+  --font-kodchasan: "kodchasan", "kodchasan Fallback";
+}
+
+/*# sourceMappingURL=app_kodchasan_1927ff7e_module_css_bad6b30c._.single.css.map*/

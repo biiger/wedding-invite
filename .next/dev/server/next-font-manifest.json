@@ -1,0 +1,22 @@
+{
+  "app": {
+    "[project]/app/page": [
+      "static/media/797e433ab948586e-s.p.dbea232f.woff2",
+      "static/media/Kodchasan_ExtraLight-s.p.e19b640a.ttf",
+      "static/media/Kodchasan_Light-s.p.c9a0ff69.ttf",
+      "static/media/Kodchasan_Regular-s.p.b30f7e95.ttf",
+      "static/media/Kodchasan_Medium-s.p.0735f215.ttf",
+      "static/media/Kodchasan_SemiBold-s.p.dfb3ebfe.ttf",
+      "static/media/Kodchasan_Bold-s.p.f29a4909.ttf",
+      "static/media/Kodchasan_Italic-s.p.53eb0610.ttf",
+      "static/media/Kodchasan_MediumItalic-s.p.58faa717.ttf",
+      "static/media/Kodchasan_BoldItalic-s.p.23102f84.ttf",
+      "static/media/Kodchasan_LightItalic-s.p.8bceee92.ttf",
+      "static/media/Kodchasan_ExtraLightItalic-s.p.f24f4d06.ttf",
+      "static/media/Kodchasan_SemiBoldItalic-s.p.8244e2a8.ttf"
+    ]
+  },
+  "appUsingSizeAdjust": true,
+  "pages": {},
+  "pagesUsingSizeAdjust": false
+}
