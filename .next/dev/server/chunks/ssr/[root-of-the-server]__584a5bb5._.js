@@ -36,26 +36,24 @@ function ImageSlider({ images, intervalMs = 4500 }) {
         setIsLoaded(false);
         setIdx((current)=>{
             if (next === current) return current;
+            const normalizedNext = next % safeImages.length;
             setPrevIdx(current);
-            const computedDir = manualDir ?? (next > current || current === safeImages.length - 1 && next === 0 ? 1 : -1);
+            const computedDir = manualDir ?? (normalizedNext > current || current === safeImages.length - 1 && normalizedNext === 0 ? 1 : -1);
             setDirection(computedDir);
-            return next % safeImages.length;
+            lastIdxRef.current = normalizedNext;
+            return normalizedNext;
         });
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (safeImages.length <= 1) return;
         const t = setInterval(()=>{
-            goTo((lastIdxRef.current + 1) % safeImages.length, 1);
+            const next = (lastIdxRef.current + 1) % safeImages.length;
+            goTo(next, 1);
         }, intervalMs);
         return ()=>clearInterval(t);
     }, [
         intervalMs,
         safeImages.length
-    ]);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        lastIdxRef.current = idx;
-    }, [
-        idx
     ]);
     if (safeImages.length === 0) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {

@@ -36,10 +36,12 @@ function ImageSlider({ images, intervalMs = 4500 }) {
         setIsLoaded(false);
         setIdx((current)=>{
             if (next === current) return current;
+            const normalizedNext = next % safeImages.length;
             setPrevIdx(current);
-            const computedDir = manualDir ?? (next > current || current === safeImages.length - 1 && next === 0 ? 1 : -1);
+            const computedDir = manualDir ?? (normalizedNext > current || current === safeImages.length - 1 && normalizedNext === 0 ? 1 : -1);
             setDirection(computedDir);
-            return next % safeImages.length;
+            lastIdxRef.current = normalizedNext;
+            return normalizedNext;
         });
     };
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
@@ -47,7 +49,8 @@ function ImageSlider({ images, intervalMs = 4500 }) {
             if (safeImages.length <= 1) return;
             const t = setInterval({
                 "ImageSlider.useEffect.t": ()=>{
-                    goTo((lastIdxRef.current + 1) % safeImages.length, 1);
+                    const next = (lastIdxRef.current + 1) % safeImages.length;
+                    goTo(next, 1);
                 }
             }["ImageSlider.useEffect.t"], intervalMs);
             return ({
@@ -57,13 +60,6 @@ function ImageSlider({ images, intervalMs = 4500 }) {
     }["ImageSlider.useEffect"], [
         intervalMs,
         safeImages.length
-    ]);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "ImageSlider.useEffect": ()=>{
-            lastIdxRef.current = idx;
-        }
-    }["ImageSlider.useEffect"], [
-        idx
     ]);
     if (safeImages.length === 0) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -223,7 +219,7 @@ function ImageSlider({ images, intervalMs = 4500 }) {
         columnNumber: 5
     }, this);
 }
-_s(ImageSlider, "OXa/xKLokcpHpb92xc9OY5Qvy9I=");
+_s(ImageSlider, "YztKLb9hN1cz/NNb2MBKxmR+ziU=");
 _c = ImageSlider;
 var _c;
 __turbopack_context__.k.register(_c, "ImageSlider");

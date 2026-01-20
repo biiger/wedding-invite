@@ -24,28 +24,28 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
     setIsLoaded(false);
     setIdx((current) => {
       if (next === current) return current;
+      const normalizedNext = next % safeImages.length;
       setPrevIdx(current);
       const computedDir =
         manualDir ??
-        (next > current || (current === safeImages.length - 1 && next === 0)
+        (normalizedNext > current ||
+        (current === safeImages.length - 1 && normalizedNext === 0)
           ? 1
           : -1);
       setDirection(computedDir);
-      return next % safeImages.length;
+      lastIdxRef.current = normalizedNext;
+      return normalizedNext;
     });
   };
 
   useEffect(() => {
     if (safeImages.length <= 1) return;
     const t = setInterval(() => {
-      goTo((lastIdxRef.current + 1) % safeImages.length, 1);
+      const next = (lastIdxRef.current + 1) % safeImages.length;
+      goTo(next, 1);
     }, intervalMs);
     return () => clearInterval(t);
   }, [intervalMs, safeImages.length]);
-
-  useEffect(() => {
-    lastIdxRef.current = idx;
-  }, [idx]);
 
   if (safeImages.length === 0) {
     return (
