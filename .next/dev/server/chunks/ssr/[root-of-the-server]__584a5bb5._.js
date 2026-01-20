@@ -28,30 +28,32 @@ function ImageSlider({ images, intervalMs = 4500 }) {
     const [isFadingIn, setIsFadingIn] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
     const [prevIdx, setPrevIdx] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [direction, setDirection] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(1);
-    const [isLoaded, setIsLoaded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const lastIdxRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(0);
-    const goTo = (next, manualDir)=>{
+    const goTo = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useCallback"])((next, manualDir)=>{
+        const len = safeImages.length;
+        if (len === 0) return;
         // trigger fade immediately so every change animates
         setIsFadingIn(true);
-        setIsLoaded(false);
         setIdx((current)=>{
-            if (next === current) return current;
-            const normalizedNext = next % safeImages.length;
-            setPrevIdx(current);
-            const computedDir = manualDir ?? (normalizedNext > current || current === safeImages.length - 1 && normalizedNext === 0 ? 1 : -1);
+            const target = (next % len + len) % len; // safe modulo
+            if (target === current) return current;
+            const computedDir = manualDir ?? (target > current || current === len - 1 && target === 0 ? 1 : -1);
             setDirection(computedDir);
-            lastIdxRef.current = normalizedNext;
-            return normalizedNext;
+            setPrevIdx(current);
+            lastIdxRef.current = target;
+            return target;
         });
-    };
+    }, [
+        safeImages.length
+    ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (safeImages.length <= 1) return;
         const t = setInterval(()=>{
-            const next = (lastIdxRef.current + 1) % safeImages.length;
-            goTo(next, 1);
+            goTo(lastIdxRef.current + 1, 1);
         }, intervalMs);
         return ()=>clearInterval(t);
     }, [
+        goTo,
         intervalMs,
         safeImages.length
     ]);
@@ -65,7 +67,7 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                     children: "public/assets/"
                 }, void 0, false, {
                     fileName: "[project]/app/components/ImageSlider.tsx",
-                    lineNumber: 53,
+                    lineNumber: 54,
                     columnNumber: 28
                 }, this),
                 "and update the list in ",
@@ -74,21 +76,21 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                     children: "app/page.tsx"
                 }, void 0, false, {
                     fileName: "[project]/app/components/ImageSlider.tsx",
-                    lineNumber: 54,
+                    lineNumber: 55,
                     columnNumber: 32
                 }, this),
                 "."
             ]
         }, void 0, true, {
             fileName: "[project]/app/components/ImageSlider.tsx",
-            lineNumber: 52,
+            lineNumber: 53,
             columnNumber: 7
         }, this);
     }
     const active = safeImages[Math.min(idx, safeImages.length - 1)];
     const mobileAspectClass = isLandscape === true ? "aspect-[16/11]" : "aspect-[4/5]";
     const imageFitClass = isLandscape === true ? "object-contain p-2" : "object-cover";
-    const baseAnimClass = "transition-all duration-900 ease-[cubic-bezier(0.22,0.61,0.36,1)] will-change-transform will-change-opacity";
+    const baseAnimClass = "transition-transform transition-opacity duration-1100 ease-[cubic-bezier(0.19,0.64,0.31,1)] will-change-transform will-change-opacity";
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         setIsFadingIn(true);
         const frame = requestAnimationFrame(()=>setIsFadingIn(false));
@@ -97,13 +99,21 @@ function ImageSlider({ images, intervalMs = 4500 }) {
         active.src
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        // Track the previous index so we can crossfade gracefully.
+        const prev = lastIdxRef.current;
+        if (prev !== idx) {
+            setPrevIdx(prev);
+        }
+        lastIdxRef.current = idx;
+    }, [
+        idx
+    ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (prevIdx === null) return;
-        if (!isLoaded) return;
-        const timeout = setTimeout(()=>setPrevIdx(null), 220);
+        const timeout = setTimeout(()=>setPrevIdx(null), 700);
         return ()=>clearTimeout(timeout);
     }, [
-        prevIdx,
-        isLoaded
+        prevIdx
     ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "relative w-full overflow-hidden",
@@ -125,11 +135,11 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                             "absolute inset-0",
                             imageFitClass,
                             baseAnimClass,
-                            direction === 1 ? isLoaded ? "-translate-x-5 opacity-0 scale-105 blur-[0.5px]" : "translate-x-0 opacity-100 scale-100 blur-0" : isLoaded ? "translate-x-5 opacity-0 scale-105 blur-[0.5px]" : "translate-x-0 opacity-100 scale-100 blur-0"
+                            direction === 1 ? "-translate-x-6 opacity-0 scale-[1.02] blur-[0.65px]" : "translate-x-6 opacity-0 scale-[1.02] blur-[0.65px]"
                         ].join(" ")
                     }, `${safeImages[prevIdx].src}-prev`, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 91,
+                        lineNumber: 100,
                         columnNumber: 11
                     }, this) : null,
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -140,38 +150,30 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                         sizes: "(max-width: 640px) 92vw, 720px",
                         onLoadingComplete: (img)=>{
                             setIsLandscape(img.naturalWidth >= img.naturalHeight);
-                            setIsLoaded(true);
                         },
                         className: [
                             imageFitClass,
                             baseAnimClass,
                             isFadingIn ? [
-                                direction === 1 ? "translate-x-6 opacity-0 scale-[0.985] blur-[0.35px]" : "-translate-x-6 opacity-0 scale-[0.985] blur-[0.35px]"
+                                direction === 1 ? "translate-x-5 opacity-0 scale-[0.985] blur-[0.45px]" : "-translate-x-5 opacity-0 scale-[0.985] blur-[0.45px]"
                             ] : "translate-x-0 opacity-100 scale-100 blur-0"
                         ].join(" ")
                     }, active.src, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 112,
+                        lineNumber: 117,
                         columnNumber: 9
                     }, this),
-                    !isLoaded ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "absolute inset-0 animate-pulse rounded-lg bg-gradient-to-br from-white/60 via-white/30 to-white/10"
-                    }, void 0, false, {
-                        fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 136,
-                        columnNumber: 11
-                    }, this) : null,
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/10"
                     }, void 0, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 138,
+                        lineNumber: 139,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/components/ImageSlider.tsx",
-                lineNumber: 82,
+                lineNumber: 91,
                 columnNumber: 7
             }, this),
             safeImages.length > 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -186,18 +188,18 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                         ].join(" ")
                     }, i, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 144,
+                        lineNumber: 145,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/app/components/ImageSlider.tsx",
-                lineNumber: 142,
+                lineNumber: 143,
                 columnNumber: 9
             }, this) : null
         ]
     }, void 0, true, {
         fileName: "[project]/app/components/ImageSlider.tsx",
-        lineNumber: 81,
+        lineNumber: 90,
         columnNumber: 5
     }, this);
 }

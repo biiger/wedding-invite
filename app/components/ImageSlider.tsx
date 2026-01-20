@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Props = {
   images: Array<{ src: string; alt: string }>;
@@ -15,37 +15,38 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
   const [isFadingIn, setIsFadingIn] = useState(true);
   const [prevIdx, setPrevIdx] = useState<number | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const [isLoaded, setIsLoaded] = useState(false);
   const lastIdxRef = useRef(0);
 
-  const goTo = (next: number, manualDir?: 1 | -1) => {
-    // trigger fade immediately so every change animates
-    setIsFadingIn(true);
-    setIsLoaded(false);
-    setIdx((current) => {
-      if (next === current) return current;
-      const normalizedNext = next % safeImages.length;
-      setPrevIdx(current);
-      const computedDir =
-        manualDir ??
-        (normalizedNext > current ||
-        (current === safeImages.length - 1 && normalizedNext === 0)
-          ? 1
-          : -1);
-      setDirection(computedDir);
-      lastIdxRef.current = normalizedNext;
-      return normalizedNext;
-    });
-  };
+  const goTo = useCallback(
+    (next: number, manualDir?: 1 | -1) => {
+      const len = safeImages.length;
+      if (len === 0) return;
+      // trigger fade immediately so every change animates
+      setIsFadingIn(true);
+      setIdx((current) => {
+        const target = ((next % len) + len) % len; // safe modulo
+        if (target === current) return current;
+
+        const computedDir =
+          manualDir ??
+          (target > current || (current === len - 1 && target === 0) ? 1 : -1);
+
+        setDirection(computedDir);
+        setPrevIdx(current);
+        lastIdxRef.current = target;
+        return target;
+      });
+    },
+    [safeImages.length],
+  );
 
   useEffect(() => {
     if (safeImages.length <= 1) return;
     const t = setInterval(() => {
-      const next = (lastIdxRef.current + 1) % safeImages.length;
-      goTo(next, 1);
+      goTo(lastIdxRef.current + 1, 1);
     }, intervalMs);
     return () => clearInterval(t);
-  }, [intervalMs, safeImages.length]);
+  }, [goTo, intervalMs, safeImages.length]);
 
   if (safeImages.length === 0) {
     return (
@@ -62,7 +63,7 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
   const imageFitClass =
     isLandscape === true ? "object-contain p-2" : "object-cover";
   const baseAnimClass =
-    "transition-all duration-900 ease-[cubic-bezier(0.22,0.61,0.36,1)] will-change-transform will-change-opacity";
+    "transition-transform transition-opacity duration-1100 ease-[cubic-bezier(0.19,0.64,0.31,1)] will-change-transform will-change-opacity";
 
   useEffect(() => {
     setIsFadingIn(true);
@@ -71,11 +72,19 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
   }, [active.src]);
 
   useEffect(() => {
+    // Track the previous index so we can crossfade gracefully.
+    const prev = lastIdxRef.current;
+    if (prev !== idx) {
+      setPrevIdx(prev);
+    }
+    lastIdxRef.current = idx;
+  }, [idx]);
+
+  useEffect(() => {
     if (prevIdx === null) return;
-    if (!isLoaded) return;
-    const timeout = setTimeout(() => setPrevIdx(null), 220);
+    const timeout = setTimeout(() => setPrevIdx(null), 700);
     return () => clearTimeout(timeout);
-  }, [prevIdx, isLoaded]);
+  }, [prevIdx]);
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -98,13 +107,9 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
               "absolute inset-0",
               imageFitClass,
               baseAnimClass,
-              direction === 1
-                ? isLoaded
-                  ? "-translate-x-5 opacity-0 scale-105 blur-[0.5px]"
-                  : "translate-x-0 opacity-100 scale-100 blur-0"
-                : isLoaded
-                  ? "translate-x-5 opacity-0 scale-105 blur-[0.5px]"
-                  : "translate-x-0 opacity-100 scale-100 blur-0",
+                direction === 1
+                  ? "-translate-x-6 opacity-0 scale-[1.02] blur-[0.65px]"
+                  : "translate-x-6 opacity-0 scale-[1.02] blur-[0.65px]",
             ].join(" ")}
           />
         ) : null}
@@ -118,7 +123,6 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
           sizes="(max-width: 640px) 92vw, 720px"
           onLoadingComplete={(img) => {
             setIsLandscape(img.naturalWidth >= img.naturalHeight);
-            setIsLoaded(true);
           }}
           className={[
             imageFitClass,
@@ -126,15 +130,12 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
             isFadingIn
               ? [
                   direction === 1
-                    ? "translate-x-6 opacity-0 scale-[0.985] blur-[0.35px]"
-                    : "-translate-x-6 opacity-0 scale-[0.985] blur-[0.35px]",
+                    ? "translate-x-5 opacity-0 scale-[0.985] blur-[0.45px]"
+                    : "-translate-x-5 opacity-0 scale-[0.985] blur-[0.45px]",
                 ]
               : "translate-x-0 opacity-100 scale-100 blur-0",
           ].join(" ")}
         />
-        {!isLoaded ? (
-          <div className="absolute inset-0 animate-pulse rounded-lg bg-gradient-to-br from-white/60 via-white/30 to-white/10" />
-        ) : null}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/10" />
       </div>
 

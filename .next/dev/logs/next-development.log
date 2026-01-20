@@ -1,13 +1,20 @@
-[00:00:00.955] Server  LOG     ✓ Ready in 711ms
-[00:00:04.076] Server  WARN    Image with src "/images/01.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:04.244] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:04.448] Browser WARN    Image with src "/images/01.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:08.897] Browser WARN    Image with src "/images/02.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:13.366] Browser WARN    Image with src "/images/03.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:17.972] Browser WARN    Image with src "/images/04.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:22.450] Browser WARN    Image with src "/images/05.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:26.945] Browser WARN    Image with src "/images/06.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:31.517] Browser WARN    Image with src "/images/07.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:36.039] Browser WARN    Image with src "/images/08.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:40.525] Browser WARN    Image with src "/images/09.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
-[00:00:45.045] Browser WARN    Image with src "/images/10.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:01.060] Server  LOG     ✓ Ready in 807ms
+[00:00:05.181] Server  WARN    Image with src "/images/01.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:05.377] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:05.615] Browser WARN    Image with src "/images/01.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:10.020] Browser WARN    Image with src "/images/02.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:14.520] Browser WARN    Image with src "/images/03.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:19.113] Browser WARN    Image with src "/images/04.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:23.497] Browser WARN    Image with src "/images/05.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:28.073] Browser WARN    Image with src "/images/06.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:32.672] Browser WARN    Image with src "/images/07.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:37.176] Browser WARN    Image with src "/images/08.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:41.687] Browser WARN    Image with src "/images/09.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:46.203] Browser WARN    Image with src "/images/10.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:00:59.862] Server  LOG     ✓ Compiled in 95ms
+[00:01:05.405] Server  LOG     ✓ Compiled in 48ms
+[00:01:09.529] Server  LOG     ✓ Compiled in 33ms
+[00:01:51.851] Server  WARN    Image with src "/images/01.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:01:52.016] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:52.238] Browser WARN    Image with src "/images/01.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
+[00:01:56.772] Browser WARN    Image with src "/images/02.jpg" is using deprecated "onLoadingComplete" property. Please use the "onLoad" property instead.
