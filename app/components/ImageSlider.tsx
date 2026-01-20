@@ -15,13 +15,16 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
   const [isFadingIn, setIsFadingIn] = useState(true);
   const [prevIdx, setPrevIdx] = useState<number | null>(null);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [isLoaded, setIsLoaded] = useState(false);
   const lastIdxRef = useRef(0);
 
   const goTo = (next: number, manualDir?: 1 | -1) => {
     // trigger fade immediately so every change animates
     setIsFadingIn(true);
+    setIsLoaded(false);
     setIdx((current) => {
       if (next === current) return current;
+      setPrevIdx(current);
       const computedDir =
         manualDir ??
         (next > current || (current === safeImages.length - 1 && next === 0)
@@ -39,6 +42,10 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
     }, intervalMs);
     return () => clearInterval(t);
   }, [intervalMs, safeImages.length]);
+
+  useEffect(() => {
+    lastIdxRef.current = idx;
+  }, [idx]);
 
   if (safeImages.length === 0) {
     return (
@@ -64,19 +71,11 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
   }, [active.src]);
 
   useEffect(() => {
-    // Track the previous index so we can crossfade gracefully.
-    const prev = lastIdxRef.current;
-    if (prev !== idx) {
-      setPrevIdx(prev);
-    }
-    lastIdxRef.current = idx;
-  }, [idx]);
-
-  useEffect(() => {
     if (prevIdx === null) return;
-    const timeout = setTimeout(() => setPrevIdx(null), 650);
+    if (!isLoaded) return;
+    const timeout = setTimeout(() => setPrevIdx(null), 220);
     return () => clearTimeout(timeout);
-  }, [prevIdx]);
+  }, [prevIdx, isLoaded]);
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -100,8 +99,12 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
               imageFitClass,
               baseAnimClass,
               direction === 1
-                ? "-translate-x-4 opacity-0 scale-105 blur-[0.5px]"
-                : "translate-x-4 opacity-0 scale-105 blur-[0.5px]",
+                ? isLoaded
+                  ? "-translate-x-5 opacity-0 scale-105 blur-[0.5px]"
+                  : "translate-x-0 opacity-100 scale-100 blur-0"
+                : isLoaded
+                  ? "translate-x-5 opacity-0 scale-105 blur-[0.5px]"
+                  : "translate-x-0 opacity-100 scale-100 blur-0",
             ].join(" ")}
           />
         ) : null}
@@ -115,6 +118,7 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
           sizes="(max-width: 640px) 92vw, 720px"
           onLoadingComplete={(img) => {
             setIsLandscape(img.naturalWidth >= img.naturalHeight);
+            setIsLoaded(true);
           }}
           className={[
             imageFitClass,
@@ -128,6 +132,9 @@ export default function ImageSlider({ images, intervalMs = 4500 }: Props) {
               : "translate-x-0 opacity-100 scale-100 blur-0",
           ].join(" ")}
         />
+        {!isLoaded ? (
+          <div className="absolute inset-0 animate-pulse rounded-lg bg-gradient-to-br from-white/60 via-white/30 to-white/10" />
+        ) : null}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/10" />
       </div>
 
