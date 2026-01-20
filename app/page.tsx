@@ -72,6 +72,26 @@ export default function Home() {
 
           <div className="card-glass ring-soft rounded-3xl p-6 sm:p-8">
             <h2 className="text-sm font-semibold tracking-wide text-zinc-900">
+              ธีม
+            </h2>
+            <div className="mt-5 flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-3">
+                <span className="h-8 w-8 rounded-full bg-[#f5e5d4] shadow-sm ring-1 ring-white/70" />
+                <span className="text-xs font-medium text-zinc-700">สีครีม</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="h-8 w-8 rounded-full bg-[#8b5a3c]/80 shadow-sm ring-1 ring-white/70" />
+                <span className="text-xs font-medium text-zinc-700">สีน้ำตาล</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="h-8 w-8 rounded-full bg-[#f5b6c8] shadow-sm ring-1 ring-white/70" />
+                <span className="text-xs font-medium text-zinc-700">สีชมพู</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="card-glass ring-soft rounded-3xl p-6 sm:p-8">
+            <h2 className="text-sm font-semibold tracking-wide text-zinc-900">
               สถานที่จัดงาน
             </h2>
             <p className="mt-3 text-xl font-semibold text-zinc-950">

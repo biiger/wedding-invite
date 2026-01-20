@@ -29,26 +29,100 @@ function ImageSlider({ images, intervalMs = 4500 }) {
     const [prevIdx, setPrevIdx] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [direction, setDirection] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(1);
     const lastIdxRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
+    const hasPreloadedRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
+    const preloadPromiseBySrcRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(new Map());
+    const transitionTokenRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(0);
+    // Preload all images once on first mount so that sliding later is instant and smooth.
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "ImageSlider.useEffect": ()=>{
+            if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+            ;
+            if (hasPreloadedRef.current) return;
+            if (!safeImages.length) return;
+            hasPreloadedRef.current = true;
+            safeImages.forEach({
+                "ImageSlider.useEffect": (img)=>{
+                    if (!img?.src) return;
+                    // Warm cache + decode once so we don't flash during transitions.
+                    void preloadAndDecode(img.src);
+                }
+            }["ImageSlider.useEffect"]);
+        }
+    }["ImageSlider.useEffect"], [
+        safeImages
+    ]);
+    const preloadAndDecode = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
+        "ImageSlider.useCallback[preloadAndDecode]": (src)=>{
+            const existing = preloadPromiseBySrcRef.current.get(src);
+            if (existing) return existing;
+            const p = new Promise({
+                "ImageSlider.useCallback[preloadAndDecode]": (resolve)=>{
+                    if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+                    ;
+                    const img = new window.Image();
+                    img.decoding = "async";
+                    img.src = src;
+                    const finish = {
+                        "ImageSlider.useCallback[preloadAndDecode].finish": async ()=>{
+                            try {
+                                // decode() prevents the "blank frame" when swapping images.
+                                // It can throw in some browsers, so we guard it.
+                                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                                if (typeof img.decode === "function") {
+                                    await img.decode();
+                                }
+                            } catch  {
+                            // ignore decode errors; cache is still warmed
+                            } finally{
+                                resolve();
+                            }
+                        }
+                    }["ImageSlider.useCallback[preloadAndDecode].finish"];
+                    if (img.complete) {
+                        void finish();
+                    } else {
+                        img.onload = ({
+                            "ImageSlider.useCallback[preloadAndDecode]": ()=>void finish()
+                        })["ImageSlider.useCallback[preloadAndDecode]"];
+                        img.onerror = ({
+                            "ImageSlider.useCallback[preloadAndDecode]": ()=>resolve()
+                        })["ImageSlider.useCallback[preloadAndDecode]"];
+                    }
+                }
+            }["ImageSlider.useCallback[preloadAndDecode]"]);
+            preloadPromiseBySrcRef.current.set(src, p);
+            return p;
+        }
+    }["ImageSlider.useCallback[preloadAndDecode]"], []);
     const goTo = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
         "ImageSlider.useCallback[goTo]": (next, manualDir)=>{
             const len = safeImages.length;
             if (len === 0) return;
-            // trigger fade immediately so every change animates
-            setIsFadingIn(true);
-            setIdx({
-                "ImageSlider.useCallback[goTo]": (current)=>{
-                    const target = (next % len + len) % len; // safe modulo
-                    if (target === current) return current;
-                    const computedDir = manualDir ?? (target > current || current === len - 1 && target === 0 ? 1 : -1);
-                    setDirection(computedDir);
-                    setPrevIdx(current);
-                    lastIdxRef.current = target;
-                    return target;
+            const target = (next % len + len) % len; // safe modulo
+            const targetSrc = safeImages[target]?.src;
+            if (!targetSrc) return;
+            const token = ++transitionTokenRef.current;
+            void preloadAndDecode(targetSrc).then({
+                "ImageSlider.useCallback[goTo]": ()=>{
+                    if (token !== transitionTokenRef.current) return;
+                    // trigger fade only when next image is decoded, preventing flashes
+                    setIsFadingIn(true);
+                    setIdx({
+                        "ImageSlider.useCallback[goTo]": (current)=>{
+                            if (target === current) return current;
+                            const computedDir = manualDir ?? (target > current || current === len - 1 && target === 0 ? 1 : -1);
+                            setDirection(computedDir);
+                            setPrevIdx(current);
+                            lastIdxRef.current = target;
+                            return target;
+                        }
+                    }["ImageSlider.useCallback[goTo]"]);
                 }
             }["ImageSlider.useCallback[goTo]"]);
         }
     }["ImageSlider.useCallback[goTo]"], [
-        safeImages.length
+        preloadAndDecode,
+        safeImages
     ]);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ImageSlider.useEffect": ()=>{
@@ -77,7 +151,7 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                     children: "public/assets/"
                 }, void 0, false, {
                     fileName: "[project]/app/components/ImageSlider.tsx",
-                    lineNumber: 54,
+                    lineNumber: 113,
                     columnNumber: 28
                 }, this),
                 "and update the list in ",
@@ -86,29 +160,38 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                     children: "app/page.tsx"
                 }, void 0, false, {
                     fileName: "[project]/app/components/ImageSlider.tsx",
-                    lineNumber: 55,
+                    lineNumber: 114,
                     columnNumber: 32
                 }, this),
                 "."
             ]
         }, void 0, true, {
             fileName: "[project]/app/components/ImageSlider.tsx",
-            lineNumber: 53,
+            lineNumber: 112,
             columnNumber: 7
         }, this);
     }
     const active = safeImages[Math.min(idx, safeImages.length - 1)];
     const mobileAspectClass = isLandscape === true ? "aspect-[16/11]" : "aspect-[4/5]";
     const imageFitClass = isLandscape === true ? "object-contain p-2" : "object-cover";
-    const baseAnimClass = "transition-transform transition-opacity duration-1100 ease-[cubic-bezier(0.19,0.64,0.31,1)] will-change-transform will-change-opacity";
+    const baseAnimClass = "transition-transform transition-opacity duration-800 ease-[cubic-bezier(0.22,0.61,0.36,1)] will-change-transform will-change-opacity";
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "ImageSlider.useEffect": ()=>{
             setIsFadingIn(true);
-            const frame = requestAnimationFrame({
-                "ImageSlider.useEffect.frame": ()=>setIsFadingIn(false)
-            }["ImageSlider.useEffect.frame"]);
+            // Use double-rAF to ensure the "from" state is painted before transitioning to "to".
+            // This prevents cases where React batching causes no visible transition on subsequent slides.
+            const frame1 = requestAnimationFrame({
+                "ImageSlider.useEffect.frame1": ()=>{
+                    const frame2 = requestAnimationFrame({
+                        "ImageSlider.useEffect.frame1.frame2": ()=>setIsFadingIn(false)
+                    }["ImageSlider.useEffect.frame1.frame2"]);
+                    return ({
+                        "ImageSlider.useEffect.frame1": ()=>cancelAnimationFrame(frame2)
+                    })["ImageSlider.useEffect.frame1"];
+                }
+            }["ImageSlider.useEffect.frame1"]);
             return ({
-                "ImageSlider.useEffect": ()=>cancelAnimationFrame(frame)
+                "ImageSlider.useEffect": ()=>cancelAnimationFrame(frame1)
             })["ImageSlider.useEffect"];
         }
     }["ImageSlider.useEffect"], [
@@ -159,11 +242,12 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                             "absolute inset-0",
                             imageFitClass,
                             baseAnimClass,
-                            direction === 1 ? "-translate-x-6 opacity-0 scale-[1.02] blur-[0.65px]" : "translate-x-6 opacity-0 scale-[1.02] blur-[0.65px]"
+                            // Old image slides out to the left
+                            isFadingIn ? "translate-x-0 opacity-100" : "-translate-x-10 opacity-0"
                         ].join(" ")
                     }, `${safeImages[prevIdx].src}-prev`, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 100,
+                        lineNumber: 164,
                         columnNumber: 11
                     }, this) : null,
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -179,25 +263,26 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                             imageFitClass,
                             baseAnimClass,
                             isFadingIn ? [
-                                direction === 1 ? "translate-x-5 opacity-0 scale-[0.985] blur-[0.45px]" : "-translate-x-5 opacity-0 scale-[0.985] blur-[0.45px]"
-                            ] : "translate-x-0 opacity-100 scale-100 blur-0"
+                                // New image slides in from the right
+                                "translate-x-10 opacity-0"
+                            ] : "translate-x-0 opacity-100"
                         ].join(" ")
-                    }, active.src, false, {
+                    }, void 0, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 117,
+                        lineNumber: 182,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-white/10"
                     }, void 0, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 139,
+                        lineNumber: 202,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/components/ImageSlider.tsx",
-                lineNumber: 91,
+                lineNumber: 155,
                 columnNumber: 7
             }, this),
             safeImages.length > 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -212,22 +297,22 @@ function ImageSlider({ images, intervalMs = 4500 }) {
                         ].join(" ")
                     }, i, false, {
                         fileName: "[project]/app/components/ImageSlider.tsx",
-                        lineNumber: 145,
+                        lineNumber: 208,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/app/components/ImageSlider.tsx",
-                lineNumber: 143,
+                lineNumber: 206,
                 columnNumber: 9
             }, this) : null
         ]
     }, void 0, true, {
         fileName: "[project]/app/components/ImageSlider.tsx",
-        lineNumber: 90,
+        lineNumber: 154,
         columnNumber: 5
     }, this);
 }
-_s(ImageSlider, "bRECvEXucYNKX39565kMCvdQvLM=");
+_s(ImageSlider, "8q1dsd+bI0vUqTF+qkHbilvVu18=");
 _c = ImageSlider;
 var _c;
 __turbopack_context__.k.register(_c, "ImageSlider");
@@ -442,10 +527,108 @@ function Home() {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                     className: "text-sm font-semibold tracking-wide text-zinc-900",
-                                    children: "สถานที่จัดงาน"
+                                    children: "ธีม"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
                                     lineNumber: 74,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "mt-5 flex flex-wrap items-center gap-4",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center gap-3",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "h-8 w-8 rounded-full bg-[#f5e5d4] shadow-sm ring-1 ring-white/70"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/page.tsx",
+                                                    lineNumber: 79,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "text-xs font-medium text-zinc-700",
+                                                    children: "สีครีม"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/page.tsx",
+                                                    lineNumber: 80,
+                                                    columnNumber: 17
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/app/page.tsx",
+                                            lineNumber: 78,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center gap-3",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "h-8 w-8 rounded-full bg-[#8b5a3c]/80 shadow-sm ring-1 ring-white/70"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/page.tsx",
+                                                    lineNumber: 83,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "text-xs font-medium text-zinc-700",
+                                                    children: "สีน้ำตาล"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/page.tsx",
+                                                    lineNumber: 84,
+                                                    columnNumber: 17
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/app/page.tsx",
+                                            lineNumber: 82,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "flex items-center gap-3",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "h-8 w-8 rounded-full bg-[#f5b6c8] shadow-sm ring-1 ring-white/70"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/page.tsx",
+                                                    lineNumber: 87,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "text-xs font-medium text-zinc-700",
+                                                    children: "สีชมพู"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/page.tsx",
+                                                    lineNumber: 88,
+                                                    columnNumber: 17
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/app/page.tsx",
+                                            lineNumber: 86,
+                                            columnNumber: 15
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/app/page.tsx",
+                                    lineNumber: 77,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "[project]/app/page.tsx",
+                            lineNumber: 73,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "card-glass ring-soft rounded-3xl p-6 sm:p-8",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                    className: "text-sm font-semibold tracking-wide text-zinc-900",
+                                    children: "สถานที่จัดงาน"
+                                }, void 0, false, {
+                                    fileName: "[project]/app/page.tsx",
+                                    lineNumber: 94,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -453,7 +636,7 @@ function Home() {
                                     children: venueName
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 77,
+                                    lineNumber: 97,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -461,7 +644,7 @@ function Home() {
                                     children: "โรงแรม Cresco Buriram"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 80,
+                                    lineNumber: 100,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -472,13 +655,13 @@ function Home() {
                                     children: "เปิด Google Maps"
                                 }, void 0, false, {
                                     fileName: "[project]/app/page.tsx",
-                                    lineNumber: 83,
+                                    lineNumber: 103,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/page.tsx",
-                            lineNumber: 73,
+                            lineNumber: 93,
                             columnNumber: 11
                         }, this)
                     ]
@@ -497,7 +680,7 @@ function Home() {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/page.tsx",
-                    lineNumber: 94,
+                    lineNumber: 114,
                     columnNumber: 9
                 }, this)
             ]
@@ -561,7 +744,7 @@ function Slider() {
         images: images
     }, void 0, false, {
         fileName: "[project]/app/page.tsx",
-        lineNumber: 117,
+        lineNumber: 137,
         columnNumber: 10
     }, this);
 }
