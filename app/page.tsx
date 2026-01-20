@@ -105,6 +105,13 @@ function Slider() {
     { src: "/images/01.jpg", alt: "Wedding photo 1" },
     { src: "/images/02.jpg", alt: "Wedding photo 2" },
     { src: "/images/03.jpg", alt: "Wedding photo 3" },
+    { src: "/images/04.jpg", alt: "Wedding photo 4" },
+    { src: "/images/05.jpg", alt: "Wedding photo 5" },
+    { src: "/images/06.jpg", alt: "Wedding photo 6" },
+    { src: "/images/07.jpg", alt: "Wedding photo 7" },
+    { src: "/images/08.jpg", alt: "Wedding photo 8" },
+    { src: "/images/09.jpg", alt: "Wedding photo 9" },
+    { src: "/images/10.jpg", alt: "Wedding photo 10" },
   ];
 
   return <ImageSlider images={images} />;
