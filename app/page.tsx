@@ -102,9 +102,9 @@ export default function Home() {
 function Slider() {
   const images = [
     // Replace with your real files, e.g. "/assets/01.jpg"
-    { src: "/assets/01.jpg", alt: "Wedding photo 1" },
-    { src: "/assets/02.jpg", alt: "Wedding photo 2" },
-    { src: "/assets/03.jpg", alt: "Wedding photo 3" },
+    { src: "/images/01.jpg", alt: "Wedding photo 1" },
+    { src: "/images/02.jpg", alt: "Wedding photo 2" },
+    { src: "/images/03.jpg", alt: "Wedding photo 3" },
   ];
 
   return <ImageSlider images={images} />;
